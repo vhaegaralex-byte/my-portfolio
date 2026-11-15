@@ -37,7 +37,6 @@
             margin: 0 auto;
         }
 
-        /* Header / Top Controls */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -102,7 +101,6 @@
             font-size: 0.8rem;
         }
 
-        /* Grid Layout */
         .grid-layout {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -115,7 +113,6 @@
             }
         }
 
-        /* Cards */
         .card {
             background: var(--card-bg);
             border-radius: 12px;
@@ -134,7 +131,6 @@
             align-items: center;
         }
 
-        /* Editable Fields Styling */
         .editable-active [contenteditable="true"] {
             background-color: #eff6ff;
             border: 1px dashed var(--primary);
@@ -175,7 +171,6 @@
             margin-top: 2px;
         }
 
-        /* Time Analyzer Stats */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -202,7 +197,6 @@
             color: var(--text-muted);
         }
 
-        /* Progress Bar for Weekly Load */
         .load-bar-container {
             margin-bottom: 20px;
         }
@@ -213,6 +207,8 @@
             font-size: 0.85rem;
             margin-bottom: 6px;
             font-weight: 600;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .progress-track {
@@ -230,7 +226,6 @@
             transition: width 0.4s ease, background-color 0.4s ease;
         }
 
-        /* Form for Adding Schedule */
         .schedule-form {
             display: grid;
             grid-template-columns: 1.2fr 1.5fr 1fr 1fr 1fr auto;
@@ -254,7 +249,6 @@
             font-size: 0.85rem;
         }
 
-        /* Timetable Table */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -306,22 +300,20 @@
 <body>
 
 <div class="container" id="appContainer">
-    <!-- Top Bar -->
     <div class="top-bar">
         <h1>🎓 Academic Portfolio & Time Manager</h1>
         <div class="btn-group">
-            <button id="toggleEditBtn" class="btn-primary" onclick="toggleEditMode()">✏️ Enable Editing</button>
-            <button class="btn-outline" onclick="resetData()">↺ Reset Default</button>
+            <button id="toggleEditBtn" class="btn-primary" type="button">✏️ Enable Editing</button>
+            <button class="btn-outline" type="button" onclick="resetData()">↺ Reset Default</button>
         </div>
     </div>
 
     <div class="grid-layout">
-        <!-- Left Column: Profile & Education -->
         <div>
             <div class="card">
                 <h2>Student Profile</h2>
                 <div class="profile-avatar" id="avatarInitials">AK</div>
-                
+
                 <div class="info-item">
                     <div class="info-label">Full Name</div>
                     <div class="info-value editable-field" data-key="fullName">Alex Kirimi</div>
@@ -361,11 +353,10 @@
             </div>
         </div>
 
-        <!-- Right Column: Timetable Analyzer & Manager -->
         <div>
             <div class="card">
                 <h2>📊 Weekly Timetable Analyzer</h2>
-                
+
                 <div class="stats-grid">
                     <div class="stat-box">
                         <div class="stat-number" id="totalHoursStat">0h</div>
@@ -395,7 +386,6 @@
             <div class="card">
                 <h2>🗓️ Timetable & Schedule Manager</h2>
 
-                <!-- Add New Session Form -->
                 <form class="schedule-form" onsubmit="addScheduleItem(event)">
                     <select id="dayInput" required>
                         <option value="Monday">Monday</option>
@@ -416,7 +406,6 @@
                     <button type="submit" class="btn-primary">+ Add</button>
                 </form>
 
-                <!-- Schedule Table -->
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
@@ -429,9 +418,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="timetableBody">
-                            <!-- Rows rendered dynamically -->
-                        </tbody>
+                        <tbody id="timetableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -442,7 +429,6 @@
 <div class="status-toast" id="toast">Changes saved automatically!</div>
 
 <script>
-    // Default initial data
     const defaultProfile = {
         fullName: "Alex Kirimi",
         university: "Kirinyaga University",
@@ -462,20 +448,37 @@
     ];
 
     let isEditMode = false;
-    let scheduleData = JSON.parse(localStorage.getItem("portfolioSchedule")) || [...defaultSchedule];
-    let profileData = JSON.parse(localStorage.getItem("portfolioProfile")) || {...defaultProfile};
+    let scheduleData = [];
+    let profileData = {};
 
-    // Initialize Page
+    function safeStorageGet(key, fallback) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch (error) {
+            return fallback;
+        }
+    }
+
+    function safeStorageSet(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {
+            console.warn("Storage is unavailable:", error);
+        }
+    }
+
     function init() {
+        profileData = safeStorageGet("portfolioProfile", { ...defaultProfile });
+        scheduleData = safeStorageGet("portfolioSchedule", [...defaultSchedule]);
         loadProfile();
         renderSchedule();
     }
 
-    // Load Profile Data into DOM
     function loadProfile() {
         document.querySelectorAll(".editable-field").forEach(el => {
             const key = el.getAttribute("data-key");
-            if (profileData[key]) {
+            if (profileData[key] !== undefined && profileData[key] !== null) {
                 el.innerText = profileData[key];
             }
         });
@@ -483,14 +486,14 @@
     }
 
     function updateAvatar() {
-        const names = profileData.fullName.trim().split(" ");
-        const initials = names.length > 1 
-            ? names[0][0] + names[names.length - 1][0] 
-            : names[0].substring(0, 2);
-        document.getElementById("avatarInitials").innerText = initials.toUpperCase();
+        const name = (profileData.fullName || "Student").trim();
+        const names = name.split(" ").filter(Boolean);
+        const initials = names.length > 1
+            ? (names[0][0] + names[names.length - 1][0]).toUpperCase()
+            : name.substring(0, 2).toUpperCase();
+        document.getElementById("avatarInitials").innerText = initials;
     }
 
-    // Toggle Inline Editing Mode
     function toggleEditMode() {
         isEditMode = !isEditMode;
         const container = document.getElementById("appContainer");
@@ -501,24 +504,23 @@
             container.classList.add("editable-active");
             btn.innerText = "💾 Save Profile";
             btn.classList.replace("btn-primary", "btn-success");
-            fields.forEach(f => f.setAttribute("contenteditable", "true"));
+            fields.forEach(field => field.setAttribute("contenteditable", "true"));
             showToast("Edit mode enabled. Click any profile field to edit.");
         } else {
             container.classList.remove("editable-active");
             btn.innerText = "✏️ Enable Editing";
             btn.classList.replace("btn-success", "btn-primary");
-            fields.forEach(f => {
-                f.setAttribute("contenteditable", "false");
-                const key = f.getAttribute("data-key");
-                profileData[key] = f.innerText.trim();
+            fields.forEach(field => {
+                field.setAttribute("contenteditable", "false");
+                const key = field.getAttribute("data-key");
+                if (key) profileData[key] = (field.innerText || "").trim();
             });
-            localStorage.setItem("portfolioProfile", JSON.stringify(profileData));
+            safeStorageSet("portfolioProfile", profileData);
             updateAvatar();
             showToast("Profile details saved!");
         }
     }
 
-    // Calculate Duration in Hours
     function getDurationHours(start, end) {
         const [sh, sm] = start.split(":").map(Number);
         const [eh, em] = end.split(":").map(Number);
@@ -526,14 +528,19 @@
         return diff > 0 ? diff : 0;
     }
 
-    // Add New Timetable Entry
     function addScheduleItem(e) {
         e.preventDefault();
+
         const day = document.getElementById("dayInput").value;
         const unit = document.getElementById("unitInput").value.trim();
         const type = document.getElementById("typeInput").value;
         const start = document.getElementById("startInput").value;
         const end = document.getElementById("endInput").value;
+
+        if (!unit) {
+            alert("Please enter a unit or activity name.");
+            return;
+        }
 
         if (getDurationHours(start, end) <= 0) {
             alert("End time must be after start time.");
@@ -554,7 +561,6 @@
         showToast("Session added to timetable!");
     }
 
-    // Delete Timetable Entry
     function deleteScheduleItem(id) {
         scheduleData = scheduleData.filter(item => item.id !== id);
         saveAndRenderSchedule();
@@ -562,23 +568,25 @@
     }
 
     function saveAndRenderSchedule() {
-        localStorage.setItem("portfolioSchedule", JSON.stringify(scheduleData));
+        safeStorageSet("portfolioSchedule", scheduleData);
         renderSchedule();
     }
 
-    // Render Table & Run Time Analyzer
     function renderSchedule() {
         const tbody = document.getElementById("timetableBody");
         tbody.innerHTML = "";
 
         const dayOrder = { "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4, "Friday": 5, "Saturday": 6 };
-        scheduleData.sort((a, b) => dayOrder[a.day] - dayOrder[b.day] || a.start.localeCompare(b.start));
+        const sortedItems = [...scheduleData].sort((a, b) => {
+            const dayCompare = (dayOrder[a.day] || 99) - (dayOrder[b.day] || 99);
+            return dayCompare || a.start.localeCompare(b.start);
+        });
 
         let totalHours = 0;
         let lectureHours = 0;
         const dayTotals = {};
 
-        scheduleData.forEach(item => {
+        sortedItems.forEach(item => {
             const hrs = getDurationHours(item.start, item.end);
             totalHours += hrs;
             if (item.type === "Lecture" || item.type === "Lab") lectureHours += hrs;
@@ -595,7 +603,7 @@
                     <td><span class="badge ${badgeClass}">${item.type}</span></td>
                     <td>${item.start} - ${item.end}</td>
                     <td>${hrs.toFixed(1)} hrs</td>
-                    <td><button class="btn-danger" onclick="deleteScheduleItem(${item.id})">Delete</button></td>
+                    <td><button class="btn-danger" type="button" onclick="deleteScheduleItem(${item.id})">Delete</button></td>
                 </tr>
             `;
             tbody.innerHTML += row;
@@ -604,10 +612,9 @@
         updateAnalyzer(totalHours, lectureHours, dayTotals);
     }
 
-    // Timetable Analyzer Logic
     function updateAnalyzer(totalHours, lectureHours, dayTotals) {
         document.getElementById("totalHoursStat").innerText = `${totalHours.toFixed(1)}h`;
-        
+
         const ratio = totalHours > 0 ? Math.round((lectureHours / totalHours) * 100) : 0;
         document.getElementById("lectureRatioStat").innerText = `${ratio}%`;
 
@@ -621,7 +628,6 @@
         }
         document.getElementById("busiestDayStat").innerText = busiestDay;
 
-        // Workload Progress Bar (Target: 40 hours/week)
         const target = 40;
         const percentage = Math.min((totalHours / target) * 100, 100);
         const progressEl = document.getElementById("workloadProgress");
@@ -652,7 +658,7 @@
         if (confirm("Reset all profile details and timetable entries to default?")) {
             localStorage.removeItem("portfolioProfile");
             localStorage.removeItem("portfolioSchedule");
-            profileData = {...defaultProfile};
+            profileData = { ...defaultProfile };
             scheduleData = [...defaultSchedule];
             loadProfile();
             renderSchedule();
@@ -660,8 +666,129 @@
         }
     }
 
-    init();
+    document.getElementById("toggleEditBtn").addEventListener("click", toggleEditMode);
+    document.addEventListener("DOMContentLoaded", init);
 </script>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

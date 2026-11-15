@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Academic Portfolio & Time Manager</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .top-bar h1 {
+            font-size: 1.35rem;
+            color: var(--primary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background-color: #f1f5f9;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 850px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            font-size: 1.15rem;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--bg-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editable-active [contenteditable="true"] {
+            background-color: #eff6ff;
+            border: 1px dashed var(--primary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .profile-avatar {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            margin-bottom: 14px;
+        }
+
+        .info-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .load-bar-container {
+            margin-bottom: 20px;
+        }
+
+        .load-bar-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+
+        .schedule-form {
+            display: grid;
+            grid-template-columns: 1.2fr 1.5fr 1fr 1fr 1fr auto;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--bg-color);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 700px) {
+            .schedule-form {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .schedule-form input, .schedule-form select {
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--bg-color);
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-lecture { background: #dbeafe; color: #1e40af; }
+        .badge-study { background: #d1fae5; color: #065f46; }
+        .badge-lab { background: #fef3c7; color: #92400e; }
+
+        .status-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0f172a;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .status-toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="appContainer">
+    <div class="top-bar">
+        <h1>🎓 Academic Portfolio & Time Manager</h1>
+        <div class="btn-group">
+            <button id="toggleEditBtn" class="btn-primary" type="button">✏️ Enable Editing</button>
+            <button class="btn-outline" type="button" onclick="resetData()">↺ Reset Default</button>
+        </div>
+    </div>
+
+    <div class="grid-layout">
+        <div>
+            <div class="card">
+                <h2>Student Profile</h2>
+                <div class="profile-avatar" id="avatarInitials">AK</div>
+
+                <div class="info-item">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value editable-field" data-key="fullName">Alex Kirimi</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">University / Institution</div>
+                    <div class="info-value editable-field" data-key="university">Kirinyaga University</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Course Pursuing</div>
+                    <div class="info-value editable-field" data-key="course">Bachelor of Science (Physics & Mathematics)</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Education Level</div>
+                    <div class="info-value editable-field" data-key="level">Undergraduate — Year 1, Semester 1</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value editable-field" data-key="email">student@example.com</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value editable-field" data-key="phone">+254 700 000 000</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Academic Bio & Focus</h2>
+                <p class="info-value editable-field" data-key="bio">
+                    First-year university student passionate about applied mathematics, thermodynamics, programming fundamentals, and structured time management.
+                </p>
+            </div>
+        </div>
+
+        <div>
+            <div class="card">
+                <h2>📊 Weekly Timetable Analyzer</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number" id="totalHoursStat">0h</div>
+                        <div class="stat-label">Scheduled Hours</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="lectureRatioStat">0%</div>
+                        <div class="stat-label">Lecture Load</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="busiestDayStat">-</div>
+                        <div class="stat-label">Busiest Day</div>
+                    </div>
+                </div>
+
+                <div class="load-bar-container">
+                    <div class="load-bar-header">
+                        <span>Weekly Academic Workload Target (40 hrs/week)</span>
+                        <span id="workloadStatusText">0 / 40 hrs (Optimal)</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="workloadProgress"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🗓️ Timetable & Schedule Manager</h2>
+
+                <form class="schedule-form" onsubmit="addScheduleItem(event)">
+                    <select id="dayInput" required>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                    </select>
+                    <input type="text" id="unitInput" placeholder="Unit / Activity (e.g. Calculus I)" required>
+                    <select id="typeInput">
+                        <option value="Lecture">Lecture</option>
+                        <option value="Lab">Lab / Practical</option>
+                        <option value="Self-Study">Self-Study</option>
+                    </select>
+                    <input type="time" id="startInput" value="08:00" required>
+                    <input type="time" id="endInput" value="10:00" required>
+                    <button type="submit" class="btn-primary">+ Add</button>
+                </form>
+
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Unit / Activity</th>
+                                <th>Category</th>
+                                <th>Time</th>
+                                <th>Duration</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timetableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="status-toast" id="toast">Changes saved automatically!</div>
+
+<script>
+    const defaultProfile = {
+        fullName: "Alex Kirimi",
+        university: "Kirinyaga University",
+        course: "Bachelor of Science (Physics & Mathematics)",
+        level: "Undergraduate — Year 1, Semester 1",
+        email: "smokealex049@gmail.com",
+        phone: "+254 712 345 678",
+        bio: "First-year university student focusing on classical mechanics, calculus, thermodynamics, and beginner Python programming."
+    };
+
+    const defaultSchedule = [
+        { id: 1, day: "Monday", unit: "Calculus I", type: "Lecture", start: "08:00", end: "10:00" },
+        { id: 2, day: "Monday", unit: "Thermal Physics Lab", type: "Lab", start: "14:00", end: "17:00" },
+        { id: 3, day: "Tuesday", unit: "Introduction to Programming", type: "Lecture", start: "10:00", end: "12:00" },
+        { id: 4, day: "Wednesday", unit: "Linear Algebra", type: "Lecture", start: "09:00", end: "11:00" },
+        { id: 5, day: "Thursday", unit: "Problem Set Revision", type: "Self-Study", start: "15:00", end: "18:00" }
+    ];
+
+    let isEditMode = false;
+    let scheduleData = [];
+    let profileData = {};
+
+    function safeStorageGet(key, fallback) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch (error) {
+            return fallback;
+        }
+    }
+
+    function safeStorageSet(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {
+            console.warn("Storage is unavailable:", error);
+        }
+    }
+
+    function init() {
+        profileData = safeStorageGet("portfolioProfile", { ...defaultProfile });
+        scheduleData = safeStorageGet("portfolioSchedule", [...defaultSchedule]);
+        loadProfile();
+        renderSchedule();
+    }
+
+    function loadProfile() {
+        document.querySelectorAll(".editable-field").forEach(el => {
+            const key = el.getAttribute("data-key");
+            if (profileData[key] !== undefined && profileData[key] !== null) {
+                el.innerText = profileData[key];
+            }
+        });
+        updateAvatar();
+    }
+
+    function updateAvatar() {
+        const name = (profileData.fullName || "Student").trim();
+        const names = name.split(" ").filter(Boolean);
+        const initials = names.length > 1
+            ? (names[0][0] + names[names.length - 1][0]).toUpperCase()
+            : name.substring(0, 2).toUpperCase();
+        document.getElementById("avatarInitials").innerText = initials;
+    }
+
+    function toggleEditMode() {
+        isEditMode = !isEditMode;
+        const container = document.getElementById("appContainer");
+        const btn = document.getElementById("toggleEditBtn");
+        const fields = document.querySelectorAll(".editable-field");
+
+        if (isEditMode) {
+            container.classList.add("editable-active");
+            btn.innerText = "💾 Save Profile";
+            btn.classList.replace("btn-primary", "btn-success");
+            fields.forEach(field => field.setAttribute("contenteditable", "true"));
+            showToast("Edit mode enabled. Click any profile field to edit.");
+        } else {
+            container.classList.remove("editable-active");
+            btn.innerText = "✏️ Enable Editing";
+            btn.classList.replace("btn-success", "btn-primary");
+            fields.forEach(field => {
+                field.setAttribute("contenteditable", "false");
+                const key = field.getAttribute("data-key");
+                if (key) profileData[key] = (field.innerText || "").trim();
+            });
+            safeStorageSet("portfolioProfile", profileData);
+            updateAvatar();
+            showToast("Profile details saved!");
+        }
+    }
+
+    function getDurationHours(start, end) {
+        const [sh, sm] = start.split(":").map(Number);
+        const [eh, em] = end.split(":").map(Number);
+        const diff = (eh + em / 60) - (sh + sm / 60);
+        return diff > 0 ? diff : 0;
+    }
+
+    function addScheduleItem(e) {
+        e.preventDefault();
+
+        const day = document.getElementById("dayInput").value;
+        const unit = document.getElementById("unitInput").value.trim();
+        const type = document.getElementById("typeInput").value;
+        const start = document.getElementById("startInput").value;
+        const end = document.getElementById("endInput").value;
+
+        if (!unit) {
+            alert("Please enter a unit or activity name.");
+            return;
+        }
+
+        if (getDurationHours(start, end) <= 0) {
+            alert("End time must be after start time.");
+            return;
+        }
+
+        scheduleData.push({
+            id: Date.now(),
+            day,
+            unit,
+            type,
+            start,
+            end
+        });
+
+        saveAndRenderSchedule();
+        document.getElementById("unitInput").value = "";
+        showToast("Session added to timetable!");
+    }
+
+    function deleteScheduleItem(id) {
+        scheduleData = scheduleData.filter(item => item.id !== id);
+        saveAndRenderSchedule();
+        showToast("Session removed.");
+    }
+
+    function saveAndRenderSchedule() {
+        safeStorageSet("portfolioSchedule", scheduleData);
+        renderSchedule();
+    }
+
+    function renderSchedule() {
+        const tbody = document.getElementById("timetableBody");
+        tbody.innerHTML = "";
+
+        const dayOrder = { "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4, "Friday": 5, "Saturday": 6 };
+        const sortedItems = [...scheduleData].sort((a, b) => {
+            const dayCompare = (dayOrder[a.day] || 99) - (dayOrder[b.day] || 99);
+            return dayCompare || a.start.localeCompare(b.start);
+        });
+
+        let totalHours = 0;
+        let lectureHours = 0;
+        const dayTotals = {};
+
+        sortedItems.forEach(item => {
+            const hrs = getDurationHours(item.start, item.end);
+            totalHours += hrs;
+            if (item.type === "Lecture" || item.type === "Lab") lectureHours += hrs;
+            dayTotals[item.day] = (dayTotals[item.day] || 0) + hrs;
+
+            let badgeClass = "badge-lecture";
+            if (item.type === "Self-Study") badgeClass = "badge-study";
+            if (item.type === "Lab") badgeClass = "badge-lab";
+
+            const row = `
+                <tr>
+                    <td><strong>${item.day}</strong></td>
+                    <td>${item.unit}</td>
+                    <td><span class="badge ${badgeClass}">${item.type}</span></td>
+                    <td>${item.start} - ${item.end}</td>
+                    <td>${hrs.toFixed(1)} hrs</td>
+                    <td><button class="btn-danger" type="button" onclick="deleteScheduleItem(${item.id})">Delete</button></td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+        updateAnalyzer(totalHours, lectureHours, dayTotals);
+    }
+
+    function updateAnalyzer(totalHours, lectureHours, dayTotals) {
+        document.getElementById("totalHoursStat").innerText = `${totalHours.toFixed(1)}h`;
+
+        const ratio = totalHours > 0 ? Math.round((lectureHours / totalHours) * 100) : 0;
+        document.getElementById("lectureRatioStat").innerText = `${ratio}%`;
+
+        let busiestDay = "-";
+        let maxHrs = 0;
+        for (const [day, hrs] of Object.entries(dayTotals)) {
+            if (hrs > maxHrs) {
+                maxHrs = hrs;
+                busiestDay = `${day.slice(0, 3)} (${hrs.toFixed(1)}h)`;
+            }
+        }
+        document.getElementById("busiestDayStat").innerText = busiestDay;
+
+        const target = 40;
+        const percentage = Math.min((totalHours / target) * 100, 100);
+        const progressEl = document.getElementById("workloadProgress");
+        const statusText = document.getElementById("workloadStatusText");
+
+        progressEl.style.width = `${percentage}%`;
+
+        if (totalHours > 40) {
+            progressEl.style.backgroundColor = "var(--danger)";
+            statusText.innerText = `${totalHours.toFixed(1)} / 40 hrs (Overloaded)`;
+        } else if (totalHours >= 25) {
+            progressEl.style.backgroundColor = "var(--success)";
+            statusText.innerText = `${totalHours.toFixed(1)} / 40 hrs (Balanced)`;
+        } else {
+            progressEl.style.backgroundColor = "var(--warning)";
+            statusText.innerText = `${totalHours.toFixed(1)} / 40 hrs (Light Load)`;
+        }
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.innerText = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2500);
+    }
+
+    function resetData() {
+        if (confirm("Reset all profile details and timetable entries to default?")) {
+            localStorage.removeItem("portfolioProfile");
+            localStorage.removeItem("portfolioSchedule");
+            profileData = { ...defaultProfile };
+            scheduleData = [...defaultSchedule];
+            loadProfile();
+            renderSchedule();
+            showToast("Reset to default data.");
+        }
+    }
+
+    document.getElementById("toggleEditBtn").addEventListener("click", toggleEditMode);
+    document.addEventListener("DOMContentLoaded", init);
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

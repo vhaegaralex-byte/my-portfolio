@@ -1,865 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Academic Portfolio & Time Manager</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 15px 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .top-bar h1 {
-            font-size: 1.35rem;
-            color: var(--primary);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            cursor: pointer;
-            border: none;
-            padding: 9px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-        }
-
-        .btn-outline:hover {
-            background-color: #f1f5f9;
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-            padding: 5px 10px;
-            font-size: 0.8rem;
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 24px;
-        }
-
-        @media (max-width: 850px) {
-            .grid-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-            margin-bottom: 24px;
-        }
-
-        .card h2 {
-            font-size: 1.15rem;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--bg-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .editable-active [contenteditable="true"] {
-            background-color: #eff6ff;
-            border: 1px dashed var(--primary);
-            padding: 4px 8px;
-            border-radius: 6px;
-            outline: none;
-        }
-
-        .profile-avatar {
-            width: 85px;
-            height: 85px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .info-item {
-            margin-bottom: 14px;
-        }
-
-        .info-label {
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            font-weight: 700;
-        }
-
-        .info-value {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-top: 2px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-box {
-            background: var(--bg-color);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .load-bar-container {
-            margin-bottom: 20px;
-        }
-
-        .load-bar-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            margin-bottom: 6px;
-            font-weight: 600;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 10px;
-            background: #e2e8f0;
-            border-radius: 999px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--success);
-            width: 0%;
-            transition: width 0.4s ease, background-color 0.4s ease;
-        }
-
-        .schedule-form {
-            display: grid;
-            grid-template-columns: 1.2fr 1.5fr 1fr 1fr 1fr auto;
-            gap: 8px;
-            margin-bottom: 20px;
-            background: var(--bg-color);
-            padding: 12px;
-            border-radius: 10px;
-        }
-
-        @media (max-width: 700px) {
-            .schedule-form {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .schedule-form input, .schedule-form select {
-            padding: 8px 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.85rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        th, td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background-color: var(--bg-color);
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .badge {
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        .badge-lecture { background: #dbeafe; color: #1e40af; }
-        .badge-study { background: #d1fae5; color: #065f46; }
-        .badge-lab { background: #fef3c7; color: #92400e; }
-
-        .status-toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #0f172a;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .status-toast.show {
-            opacity: 1;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a34">
+  <meta name="description" content="Academic portfolio and weekly timetable for Alex Kirimi.">
+  <title>Alex Kirimi | Academic Portfolio</title>
+  <style>
+    :root { --primary:#5b7cfa; --primary-dark:#4564df; --ink:#172033; --muted:#64748b; --line:#e5eaf2; --page:#f4f7fb; --card:#fff; --success:#0e9f6e; --warning:#d97706; --danger:#dc3545; --shadow:0 16px 45px rgba(27,44,80,.08); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--page); color:var(--ink); line-height:1.6; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+    button,input,select { font:inherit; }
+    button,a,select,input { -webkit-tap-highlight-color:transparent; }
+    button { cursor:pointer; }
+    a { color:inherit; }
+    .container { width:min(1120px,calc(100% - 36px)); margin:0 auto; }
+    .hero { position:relative; isolation:isolate; overflow:hidden; color:white; padding:22px 0 72px; background:linear-gradient(125deg,#101a34 0%,#173c70 52%,#3569b8 100%); }
+    .hero::before,.hero::after { position:absolute; z-index:-1; content:""; border-radius:50%; filter:blur(1px); }
+    .hero::before { width:420px; height:420px; right:-120px; top:-230px; background:#7c9eff33; }
+    .hero::after { width:310px; height:310px; right:18%; bottom:-240px; background:#7c9eff24; }
+    .nav { display:flex; justify-content:space-between; align-items:center; gap:18px; }
+    .brand { color:white; text-decoration:none; font-weight:800; letter-spacing:.03em; }
+    .nav-links { display:flex; gap:22px; align-items:center; }
+    .nav-links a { color:#e2eaff; text-decoration:none; font-size:.92rem; }
+    .nav-links a:hover { color:white; }
+    .hero-content { display:grid; grid-template-columns:minmax(0,1fr) 190px; align-items:center; gap:44px; padding-top:68px; }
+    .eyebrow { margin:0 0 12px; color:#bed0ff; font-size:.78rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+    .hero h1 { max-width:760px; margin:0; font-size:clamp(2.4rem,7vw,4.7rem); line-height:1.04; letter-spacing:-.055em; }
+    .hero-copy { max-width:630px; margin:18px 0 0; color:#e1e9fa; font-size:clamp(1rem,2vw,1.15rem); }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:11px; margin-top:26px; }
+    .avatar { width:172px; aspect-ratio:1; display:grid; place-items:center; justify-self:center; border:1px solid #ffffff66; border-radius:42px; background:linear-gradient(145deg,#ffffff35,#ffffff12); box-shadow:0 24px 60px #07152d55; color:white; font-size:3.2rem; font-weight:800; backdrop-filter:blur(12px); }
+    .button { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:42px; padding:10px 16px; border:1px solid transparent; border-radius:11px; font-size:.9rem; font-weight:700; text-decoration:none; transition:.18s ease; }
+    .button:hover { transform:translateY(-1px); }
+    .button-light { color:#19345e; background:white; }
+    .button-ghost { color:white; border-color:#ffffff70; background:#ffffff12; }
+    .button-primary { color:white; background:var(--primary); }
+    .button-primary:hover { background:var(--primary-dark); }
+    .button-success { color:white; background:var(--success); }
+    .button-outline { border-color:var(--line); background:white; color:var(--ink); }
+    .button-danger { padding:6px 10px; color:white; background:var(--danger); font-size:.78rem; }
+    main { padding:0 0 54px; }
+    .intro-strip { position:relative; margin-top:-28px; padding:18px 22px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; background:var(--card); border:1px solid #edf0f6; border-radius:16px; box-shadow:var(--shadow); }
+    .intro-item { padding:3px 14px; border-right:1px solid var(--line); }
+    .intro-item:last-child { border:0; }
+    .intro-label { display:block; color:var(--muted); font-size:.74rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .intro-value { display:block; margin-top:3px; font-weight:700; overflow-wrap:anywhere; }
+    .section-heading { display:flex; justify-content:space-between; align-items:end; gap:16px; margin:42px 0 18px; }
+    .section-heading h2 { margin:0; font-size:clamp(1.35rem,3vw,1.8rem); letter-spacing:-.035em; }
+    .section-heading p { max-width:510px; margin:4px 0 0; color:var(--muted); }
+    .grid-layout { display:grid; grid-template-columns:minmax(250px,.82fr) minmax(0,1.65fr); gap:22px; align-items:start; }
+    .card { min-width:0; padding:clamp(18px,3vw,25px); margin-bottom:22px; background:var(--card); border:1px solid #e9edf4; border-radius:17px; box-shadow:var(--shadow); }
+    .card h3 { margin:0 0 17px; padding-bottom:12px; border-bottom:1px solid var(--line); font-size:1.08rem; }
+    .profile-avatar { width:64px; height:64px; display:grid; place-items:center; margin-bottom:16px; border-radius:20px; background:#eaf0ff; color:var(--primary); font-size:1.45rem; font-weight:850; }
+    .info-item { margin-bottom:15px; }
+    .info-label { color:var(--muted); font-size:.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .info-value { margin-top:3px; font-weight:600; overflow-wrap:anywhere; }
+    .bio { color:#42506a; font-weight:450; }
+    .editable-active [contenteditable="true"] { padding:3px 6px; border:1px dashed var(--primary); border-radius:6px; outline:none; background:#eff4ff; }
+    .social-links { display:flex; flex-wrap:wrap; gap:9px; margin-top:17px; }
+    .social-link { display:inline-flex; align-items:center; gap:7px; padding:8px 11px; border:1px solid var(--line); border-radius:10px; color:#34425d; font-size:.84rem; font-weight:700; text-decoration:none; }
+    .social-link:hover { border-color:#b6c7ff; color:var(--primary-dark); background:#f7f9ff; }
+    .stats-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:11px; margin-bottom:20px; }
+    .stat-box { padding:14px 10px; border:1px solid var(--line); border-radius:13px; background:#f8faff; text-align:center; }
+    .stat-number { color:var(--primary); font-size:clamp(1.2rem,3vw,1.55rem); font-weight:850; line-height:1.25; }
+    .stat-label { margin-top:4px; color:var(--muted); font-size:.75rem; }
+    .load-bar-container { margin-top:6px; }
+    .load-bar-header { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; margin-bottom:8px; font-size:.82rem; font-weight:650; }
+    .progress-track { height:10px; overflow:hidden; border-radius:999px; background:#e6ebf3; }
+    .progress-fill { width:0; height:100%; border-radius:inherit; background:var(--success); transition:width .35s ease,background .2s ease; }
+    .schedule-form { display:grid; grid-template-columns:1fr 1.5fr 1fr 1fr 1fr auto; gap:8px; margin-bottom:18px; padding:12px; border:1px solid var(--line); border-radius:13px; background:#f8faff; }
+    .schedule-form input,.schedule-form select { min-width:0; width:100%; padding:9px 10px; border:1px solid #dce3ee; border-radius:8px; background:white; color:var(--ink); font-size:.83rem; }
+    .schedule-form input:focus,.schedule-form select:focus { outline:3px solid #2563eb20; border-color:#8ba5ff; }
+    .table-wrap { width:100%; overflow-x:auto; border:1px solid var(--line); border-radius:12px; }
+    table { width:100%; min-width:650px; border-collapse:collapse; font-size:.86rem; }
+    th,td { padding:12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle; }
+    th { background:#f8faff; color:var(--muted); font-size:.72rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
+    tr:last-child td { border-bottom:0; }
+    .badge { display:inline-block; padding:4px 8px; border-radius:99px; font-size:.72rem; font-weight:750; white-space:nowrap; }
+    .badge-lecture { background:#e7efff; color:#234db3; }
+    .badge-study { background:#dcf7ed; color:#087451; }
+    .badge-lab { background:#fff1d2; color:#8a5700; }
+    .empty-state { padding:24px; color:var(--muted); text-align:center; }
+    .contact-card { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:18px; padding:22px; border-radius:17px; color:white; background:linear-gradient(120deg,#182a50,#315db0); }
+    .contact-card h2 { margin:0; font-size:1.35rem; }
+    .contact-card p { margin:5px 0 0; color:#dbe6ff; }
+    .contact-card .button { flex-shrink:0; }
+    footer { padding:20px 0 30px; color:var(--muted); text-align:center; font-size:.82rem; }
+    .status-toast { position:fixed; z-index:5; right:max(18px,env(safe-area-inset-right)); bottom:max(18px,env(safe-area-inset-bottom)); max-width:calc(100% - 36px); padding:11px 16px; transform:translateY(12px); border-radius:10px; background:#111827; color:white; font-size:.85rem; opacity:0; pointer-events:none; transition:.2s ease; }
+    .status-toast.show { transform:translateY(0); opacity:1; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    button:focus-visible,a:focus-visible { outline:3px solid #91aaff; outline-offset:3px; }
+    @media (max-width:900px) { .schedule-form { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    @media (max-width:760px) { .container { width:min(100% - 28px,600px); } .hero { padding-top:16px; padding-bottom:60px; } .hero-content { grid-template-columns:1fr 100px; gap:16px; padding-top:50px; } .avatar { width:94px; border-radius:28px; font-size:2rem; } .grid-layout { grid-template-columns:1fr; gap:0; } .section-heading { align-items:start; flex-direction:column; margin-top:34px; } .intro-strip { padding:12px; } .intro-item { padding:3px 8px; } }
+    @media (max-width:540px) { .container { width:calc(100% - 24px); } .nav { align-items:flex-start; } .nav-links { justify-content:flex-end; gap:12px; flex-wrap:wrap; } .nav-links a { font-size:.8rem; } .hero-content { grid-template-columns:1fr; padding-top:42px; } .avatar { display:none; } .hero h1 { font-size:clamp(2.35rem,12vw,3.8rem); } .hero-copy { font-size:.98rem; } .intro-strip { grid-template-columns:1fr; gap:0; margin-top:-24px; } .intro-item { padding:10px 8px; border-right:0; border-bottom:1px solid var(--line); } .intro-item:last-child { border-bottom:0; } .stats-grid { gap:7px; } .stat-box { padding:12px 5px; } .schedule-form { grid-template-columns:1fr 1fr; } .schedule-form input:nth-of-type(1) { grid-column:1 / -1; } .schedule-form button { grid-column:1 / -1; } .btn-group { width:100%; } .btn-group .button { flex:1; } .contact-card { align-items:flex-start; flex-direction:column; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition-duration:.01ms !important; } }
+  </style>
 </head>
 <body>
-
-<div class="container" id="appContainer">
-    <div class="top-bar">
-        <h1>🎓 Academic Portfolio & Time Manager</h1>
-        <div class="btn-group">
-            <button id="toggleEditBtn" class="btn-primary" type="button">✏️ Enable Editing</button>
-            <button class="btn-outline" type="button" onclick="resetData()">↺ Reset Default</button>
-        </div>
-    </div>
-
-    <div class="grid-layout">
-        <div>
-            <div class="card">
-                <h2>Student Profile</h2>
-                <div class="profile-avatar" id="avatarInitials">AK</div>
-
-                <div class="info-item">
-                    <div class="info-label">Full Name</div>
-                    <div class="info-value editable-field" data-key="fullName">Alex Kirimi</div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">University / Institution</div>
-                    <div class="info-value editable-field" data-key="university">Kirinyaga University</div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Course Pursuing</div>
-                    <div class="info-value editable-field" data-key="course">Bachelor of Science (Physics & Mathematics)</div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Education Level</div>
-                    <div class="info-value editable-field" data-key="level">Undergraduate — Year 1, Semester 1</div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Email Address</div>
-                    <div class="info-value editable-field" data-key="email">student@example.com</div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Phone Number</div>
-                    <div class="info-value editable-field" data-key="phone">+254 700 000 000</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Academic Bio & Focus</h2>
-                <p class="info-value editable-field" data-key="bio">
-                    First-year university student passionate about applied mathematics, thermodynamics, programming fundamentals, and structured time management.
-                </p>
-            </div>
-        </div>
-
-        <div>
-            <div class="card">
-                <h2>📊 Weekly Timetable Analyzer</h2>
-
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-number" id="totalHoursStat">0h</div>
-                        <div class="stat-label">Scheduled Hours</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="lectureRatioStat">0%</div>
-                        <div class="stat-label">Lecture Load</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="busiestDayStat">-</div>
-                        <div class="stat-label">Busiest Day</div>
-                    </div>
-                </div>
-
-                <div class="load-bar-container">
-                    <div class="load-bar-header">
-                        <span>Weekly Academic Workload Target (40 hrs/week)</span>
-                        <span id="workloadStatusText">0 / 40 hrs (Optimal)</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" id="workloadProgress"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>🗓️ Timetable & Schedule Manager</h2>
-
-                <form class="schedule-form" onsubmit="addScheduleItem(event)">
-                    <select id="dayInput" required>
-                        <option value="Monday">Monday</option>
-                        <option value="Tuesday">Tuesday</option>
-                        <option value="Wednesday">Wednesday</option>
-                        <option value="Thursday">Thursday</option>
-                        <option value="Friday">Friday</option>
-                        <option value="Saturday">Saturday</option>
-                    </select>
-                    <input type="text" id="unitInput" placeholder="Unit / Activity (e.g. Calculus I)" required>
-                    <select id="typeInput">
-                        <option value="Lecture">Lecture</option>
-                        <option value="Lab">Lab / Practical</option>
-                        <option value="Self-Study">Self-Study</option>
-                    </select>
-                    <input type="time" id="startInput" value="08:00" required>
-                    <input type="time" id="endInput" value="10:00" required>
-                    <button type="submit" class="btn-primary">+ Add</button>
-                </form>
-
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Day</th>
-                                <th>Unit / Activity</th>
-                                <th>Category</th>
-                                <th>Time</th>
-                                <th>Duration</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="timetableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="status-toast" id="toast">Changes saved automatically!</div>
-
-<script>
-    const defaultProfile = {
-        fullName: "Alex Kirimi",
-        university: "Kirinyaga University",
-        course: "Bachelor of Science (Physics & Mathematics)",
-        level: "Undergraduate — Year 1, Semester 1",
-        email: "smokealex049@gmail.com",
-        phone: "+254 712 345 678",
-        bio: "First-year university student focusing on classical mechanics, calculus, thermodynamics, and beginner Python programming."
-    };
-
-    const defaultSchedule = [
-        { id: 1, day: "Monday", unit: "Calculus I", type: "Lecture", start: "08:00", end: "10:00" },
-        { id: 2, day: "Monday", unit: "Thermal Physics Lab", type: "Lab", start: "14:00", end: "17:00" },
-        { id: 3, day: "Tuesday", unit: "Introduction to Programming", type: "Lecture", start: "10:00", end: "12:00" },
-        { id: 4, day: "Wednesday", unit: "Linear Algebra", type: "Lecture", start: "09:00", end: "11:00" },
-        { id: 5, day: "Thursday", unit: "Problem Set Revision", type: "Self-Study", start: "15:00", end: "18:00" }
-    ];
-
-    let isEditMode = false;
-    let scheduleData = [];
-    let profileData = {};
-
-    function safeStorageGet(key, fallback) {
-        try {
-            const raw = localStorage.getItem(key);
-            return raw ? JSON.parse(raw) : fallback;
-        } catch (error) {
-            return fallback;
-        }
-    }
-
-    function safeStorageSet(key, value) {
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-        } catch (error) {
-            console.warn("Storage is unavailable:", error);
-        }
-    }
-
-    function init() {
-        profileData = safeStorageGet("portfolioProfile", { ...defaultProfile });
-        scheduleData = safeStorageGet("portfolioSchedule", [...defaultSchedule]);
-        loadProfile();
-        renderSchedule();
-    }
-
-    function loadProfile() {
-        document.querySelectorAll(".editable-field").forEach(el => {
-            const key = el.getAttribute("data-key");
-            if (profileData[key] !== undefined && profileData[key] !== null) {
-                el.innerText = profileData[key];
-            }
-        });
-        updateAvatar();
-    }
-
-    function updateAvatar() {
-        const name = (profileData.fullName || "Student").trim();
-        const names = name.split(" ").filter(Boolean);
-        const initials = names.length > 1
-            ? (names[0][0] + names[names.length - 1][0]).toUpperCase()
-            : name.substring(0, 2).toUpperCase();
-        document.getElementById("avatarInitials").innerText = initials;
-    }
-
-    function toggleEditMode() {
-        isEditMode = !isEditMode;
-        const container = document.getElementById("appContainer");
-        const btn = document.getElementById("toggleEditBtn");
-        const fields = document.querySelectorAll(".editable-field");
-
-        if (isEditMode) {
-            container.classList.add("editable-active");
-            btn.innerText = "💾 Save Profile";
-            btn.classList.replace("btn-primary", "btn-success");
-            fields.forEach(field => field.setAttribute("contenteditable", "true"));
-            showToast("Edit mode enabled. Click any profile field to edit.");
-        } else {
-            container.classList.remove("editable-active");
-            btn.innerText = "✏️ Enable Editing";
-            btn.classList.replace("btn-success", "btn-primary");
-            fields.forEach(field => {
-                field.setAttribute("contenteditable", "false");
-                const key = field.getAttribute("data-key");
-                if (key) profileData[key] = (field.innerText || "").trim();
-            });
-            safeStorageSet("portfolioProfile", profileData);
-            updateAvatar();
-            showToast("Profile details saved!");
-        }
-    }
-
-    function getDurationHours(start, end) {
-        const [sh, sm] = start.split(":").map(Number);
-        const [eh, em] = end.split(":").map(Number);
-        const diff = (eh + em / 60) - (sh + sm / 60);
-        return diff > 0 ? diff : 0;
-    }
-
-    function addScheduleItem(e) {
-        e.preventDefault();
-
-        const day = document.getElementById("dayInput").value;
-        const unit = document.getElementById("unitInput").value.trim();
-        const type = document.getElementById("typeInput").value;
-        const start = document.getElementById("startInput").value;
-        const end = document.getElementById("endInput").value;
-
-        if (!unit) {
-            alert("Please enter a unit or activity name.");
-            return;
-        }
-
-        if (getDurationHours(start, end) <= 0) {
-            alert("End time must be after start time.");
-            return;
-        }
-
-        scheduleData.push({
-            id: Date.now(),
-            day,
-            unit,
-            type,
-            start,
-            end
-        });
-
-        saveAndRenderSchedule();
-        document.getElementById("unitInput").value = "";
-        showToast("Session added to timetable!");
-    }
-
-    function deleteScheduleItem(id) {
-        scheduleData = scheduleData.filter(item => item.id !== id);
-        saveAndRenderSchedule();
-        showToast("Session removed.");
-    }
-
-    function saveAndRenderSchedule() {
-        safeStorageSet("portfolioSchedule", scheduleData);
-        renderSchedule();
-    }
-
-    function renderSchedule() {
-        const tbody = document.getElementById("timetableBody");
-        tbody.innerHTML = "";
-
-        const dayOrder = { "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4, "Friday": 5, "Saturday": 6 };
-        const sortedItems = [...scheduleData].sort((a, b) => {
-            const dayCompare = (dayOrder[a.day] || 99) - (dayOrder[b.day] || 99);
-            return dayCompare || a.start.localeCompare(b.start);
-        });
-
-        let totalHours = 0;
-        let lectureHours = 0;
-        const dayTotals = {};
-
-        sortedItems.forEach(item => {
-            const hrs = getDurationHours(item.start, item.end);
-            totalHours += hrs;
-            if (item.type === "Lecture" || item.type === "Lab") lectureHours += hrs;
-            dayTotals[item.day] = (dayTotals[item.day] || 0) + hrs;
-
-            let badgeClass = "badge-lecture";
-            if (item.type === "Self-Study") badgeClass = "badge-study";
-            if (item.type === "Lab") badgeClass = "badge-lab";
-
-            const row = `
-                <tr>
-                    <td><strong>${item.day}</strong></td>
-                    <td>${item.unit}</td>
-                    <td><span class="badge ${badgeClass}">${item.type}</span></td>
-                    <td>${item.start} - ${item.end}</td>
-                    <td>${hrs.toFixed(1)} hrs</td>
-                    <td><button class="btn-danger" type="button" onclick="deleteScheduleItem(${item.id})">Delete</button></td>
-                </tr>
-            `;
-            tbody.innerHTML += row;
-        });
-
-        updateAnalyzer(totalHours, lectureHours, dayTotals);
-    }
-
-    function updateAnalyzer(totalHours, lectureHours, dayTotals) {
-        document.getElementById("totalHoursStat").innerText = `${totalHours.toFixed(1)}h`;
-
-        const ratio = totalHours > 0 ? Math.round((lectureHours / totalHours) * 100) : 0;
-        document.getElementById("lectureRatioStat").innerText = `${ratio}%`;
-
-        let busiestDay = "-";
-        let maxHrs = 0;
-        for (const [day, hrs] of Object.entries(dayTotals)) {
-            if (hrs > maxHrs) {
-                maxHrs = hrs;
-                busiestDay = `${day.slice(0, 3)} (${hrs.toFixed(1)}h)`;
-            }
-        }
-        document.getElementById("busiestDayStat").innerText = busiestDay;
-
-        const target = 40;
-        const percentage = Math.min((totalHours / target) * 100, 100);
-        const progressEl = document.getElementById("workloadProgress");
-        const statusText = document.getElementById("workloadStatusText");
-
-        progressEl.style.width = `${percentage}%`;
-
-        if (totalHours > 40) {
-            progressEl.style.backgroundColor = "var(--danger)";
-            statusText.innerText = `${totalHours.toFixed(1)} / 40 hrs (Overloaded)`;
-        } else if (totalHours >= 25) {
-            progressEl.style.backgroundColor = "var(--success)";
-            statusText.innerText = `${totalHours.toFixed(1)} / 40 hrs (Balanced)`;
-        } else {
-            progressEl.style.backgroundColor = "var(--warning)";
-            statusText.innerText = `${totalHours.toFixed(1)} / 40 hrs (Light Load)`;
-        }
-    }
-
-    function showToast(msg) {
-        const toast = document.getElementById("toast");
-        toast.innerText = msg;
-        toast.classList.add("show");
-        setTimeout(() => toast.classList.remove("show"), 2500);
-    }
-
-    function resetData() {
-        if (confirm("Reset all profile details and timetable entries to default?")) {
-            localStorage.removeItem("portfolioProfile");
-            localStorage.removeItem("portfolioSchedule");
-            profileData = { ...defaultProfile };
-            scheduleData = [...defaultSchedule];
-            loadProfile();
-            renderSchedule();
-            showToast("Reset to default data.");
-        }
-    }
-
-    document.getElementById("toggleEditBtn").addEventListener("click", toggleEditMode);
-    document.addEventListener("DOMContentLoaded", init);
-</script>
-
+  <header class="hero" id="top"><div class="container">
+    <nav class="nav" aria-label="Main navigation"><a class="brand" href="#top">AK<span aria-hidden="true">.</span></a><div class="nav-links"><a href="#about">About</a><a href="#schedule">Timetable</a><a href="#contact">Contact</a></div></nav>
+    <div class="hero-content" id="appContainer"><div><p class="eyebrow">Academic portfolio · <span class="editable-field" data-key="level">Undergraduate — Year 1, Semester 1</span></p><h1>Hi, I’m <span class="editable-field" data-key="fullName">Alex Kirimi</span>.</h1><p class="hero-copy editable-field" data-key="bio">First-year university student focusing on classical mechanics, calculus, thermodynamics, and beginner Python programming.</p><div class="hero-actions"><a class="button button-light" href="#schedule">Explore my timetable <span aria-hidden="true">↓</span></a><a class="button button-ghost" id="heroEmail" href="mailto:smokealex049@gmail.com">Get in touch</a></div></div><div class="avatar" id="avatarInitials" aria-label="Profile initials">AK</div></div>
+  </div></header>
+  <main class="container">
+    <section class="intro-strip" aria-label="Academic overview"><div class="intro-item"><span class="intro-label">Currently studying</span><span class="intro-value editable-field" data-key="course">Bachelor of Science (Physics & Mathematics)</span></div><div class="intro-item"><span class="intro-label">Institution</span><span class="intro-value editable-field" data-key="university">Kirinyaga University</span></div><div class="intro-item"><span class="intro-label">Focus</span><span class="intro-value">Physics · Mathematics · Programming</span></div></section>
+    <section id="about"><div class="section-heading"><div><h2>About & academic life</h2><p>A little about me, what I’m studying, and how I organize my week.</p></div><div class="btn-group"><button id="toggleEditBtn" class="button button-primary" type="button">✏️ Edit profile</button><button id="resetBtn" class="button button-outline" type="button">Reset</button></div></div>
+      <div class="grid-layout"><div>
+        <section class="card" aria-labelledby="profileTitle"><h3 id="profileTitle">Student profile</h3><div class="profile-avatar" id="profileInitials" aria-hidden="true">AK</div>
+          <div class="info-item"><div class="info-label">Full name</div><div class="info-value editable-field" data-key="fullName">Alex Kirimi</div></div><div class="info-item"><div class="info-label">University / institution</div><div class="info-value editable-field" data-key="university">Kirinyaga University</div></div><div class="info-item"><div class="info-label">Course</div><div class="info-value editable-field" data-key="course">Bachelor of Science (Physics & Mathematics)</div></div><div class="info-item"><div class="info-label">Education level</div><div class="info-value editable-field" data-key="level">Undergraduate — Year 1, Semester 1</div></div><div class="info-item"><div class="info-label">Email</div><div class="info-value editable-field" data-key="email">smokealex049@gmail.com</div></div><div class="info-item"><div class="info-label">Phone</div><div class="info-value editable-field" data-key="phone">+254 712 345 678</div></div><div class="info-item"><div class="info-label">GitHub URL (edit in profile mode)</div><div class="info-value editable-field" data-key="github">https://github.com/your-username</div></div><div class="info-item"><div class="info-label">LinkedIn URL (edit in profile mode)</div><div class="info-value editable-field" data-key="linkedin">https://www.linkedin.com/in/your-profile</div></div><div class="social-links" id="socialLinks" aria-label="Contact and social links"></div>
+        </section>
+        <section class="card"><h3>Academic bio & focus</h3><p class="info-value bio editable-field" data-key="bio">First-year university student focusing on classical mechanics, calculus, thermodynamics, and beginner Python programming.</p></section>
+      </div><div>
+        <section class="card" aria-labelledby="analyzerTitle"><h3 id="analyzerTitle">📊 Weekly timetable analyzer</h3><div class="stats-grid"><div class="stat-box"><div class="stat-number" id="totalHoursStat">0h</div><div class="stat-label">Scheduled hours</div></div><div class="stat-box"><div class="stat-number" id="lectureRatioStat">0%</div><div class="stat-label">Lecture & lab load</div></div><div class="stat-box"><div class="stat-number" id="busiestDayStat">—</div><div class="stat-label">Busiest day</div></div></div><div class="load-bar-container"><div class="load-bar-header"><span>Weekly academic workload target (40 hrs)</span><span id="workloadStatusText">0 / 40 hrs (Light Load)</span></div><div class="progress-track" role="progressbar" aria-label="Weekly academic workload" aria-valuemin="0" aria-valuemax="40" aria-valuenow="0"><div class="progress-fill" id="workloadProgress"></div></div></div></section>
+        <section class="card" id="schedule"><h3>🗓️ Timetable & schedule manager</h3><form class="schedule-form" id="scheduleForm"><label class="sr-only" for="dayInput">Day</label><select id="dayInput" required><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select><label class="sr-only" for="unitInput">Unit or activity</label><input type="text" id="unitInput" placeholder="Unit / Activity" maxlength="100" required><label class="sr-only" for="typeInput">Category</label><select id="typeInput"><option value="Lecture">Lecture</option><option value="Lab">Lab / Practical</option><option value="Self-Study">Self-Study</option></select><label class="sr-only" for="startInput">Start time</label><input type="time" id="startInput" value="08:00" required><label class="sr-only" for="endInput">End time</label><input type="time" id="endInput" value="10:00" required><button type="submit" class="button button-primary">+ Add</button></form><div class="table-wrap"><table><thead><tr><th>Day</th><th>Unit / activity</th><th>Category</th><th>Time</th><th>Duration</th><th>Action</th></tr></thead><tbody id="timetableBody"></tbody></table></div></section>
+      </div></div>
+    </section>
+    <section class="contact-card" id="contact"><div><h2>Let’s connect</h2><p>Questions, collaborations, or a chat about science and programming are welcome.</p></div><a class="button button-light" id="contactEmail" href="mailto:smokealex049@gmail.com">Email me <span aria-hidden="true">↗</span></a></section>
+  </main>
+  <footer class="container">© <span id="currentYear"></span> <span id="footerName">Alex Kirimi</span> · Academic portfolio</footer>
+  <div class="status-toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    (() => {
+      const defaultProfile = { fullName:"Alex Kirimi", university:"Kirinyaga University", course:"Bachelor of Science (Physics & Mathematics)", level:"Undergraduate — Year 1, Semester 1", email:"smokealex049@gmail.com", phone:"+254 712 345 678", github:"https://github.com/your-username", linkedin:"https://www.linkedin.com/in/your-profile", bio:"First-year university student focusing on classical mechanics, calculus, thermodynamics, and beginner Python programming." };
+      const defaultSchedule = [{id:1,day:"Monday",unit:"Calculus I",type:"Lecture",start:"08:00",end:"10:00"},{id:2,day:"Monday",unit:"Thermal Physics Lab",type:"Lab",start:"14:00",end:"17:00"},{id:3,day:"Tuesday",unit:"Introduction to Programming",type:"Lecture",start:"10:00",end:"12:00"},{id:4,day:"Wednesday",unit:"Linear Algebra",type:"Lecture",start:"09:00",end:"11:00"},{id:5,day:"Thursday",unit:"Problem Set Revision",type:"Self-Study",start:"15:00",end:"18:00"}];
+      const dayOrder={Monday:1,Tuesday:2,Wednesday:3,Thursday:4,Friday:5,Saturday:6,Sunday:7};
+      let profileData={...defaultProfile}, scheduleData=[...defaultSchedule], isEditMode=false, toastTimer;
+      function storageGet(key,fallback){try{const value=JSON.parse(localStorage.getItem(key));return value===null?fallback:value;}catch(_){return fallback;}}
+      function storageSet(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch(_){showToast("Browser storage is unavailable; changes may not persist.");}}
+      function showToast(message){const toast=document.getElementById("toast");toast.textContent=message;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),2600);}
+      function initialsFor(name){const parts=String(name||"Student").trim().split(/\s+/).filter(Boolean);return(parts.length>1?parts[0][0]+parts[parts.length-1][0]:(parts[0]||"S").slice(0,2)).toUpperCase();}
+      function loadProfile(){document.querySelectorAll(".editable-field").forEach(field=>{field.textContent=profileData[field.dataset.key]??defaultProfile[field.dataset.key]??"";});updateProfilePresentation();}
+      function updateProfilePresentation(){const initials=initialsFor(profileData.fullName);document.getElementById("avatarInitials").textContent=initials;document.getElementById("profileInitials").textContent=initials;document.getElementById("footerName").textContent=profileData.fullName||"Student";const email=String(profileData.email||"").trim(),emailHref=email?`mailto:${email}`:"#contact";document.getElementById("heroEmail").href=emailHref;document.getElementById("contactEmail").href=emailHref;const links=document.getElementById("socialLinks");links.replaceChildren();const add=(label,href,icon)=>{if(!href||!/^https:\/\//i.test(href))return;const a=document.createElement("a");a.className="social-link";a.href=href;a.target="_blank";a.rel="noopener noreferrer";a.textContent=`${icon} ${label}`;links.appendChild(a);};if(email){const a=document.createElement("a");a.className="social-link";a.href=emailHref;a.textContent=`✉ ${email}`;links.appendChild(a);}if(profileData.phone){const a=document.createElement("a");a.className="social-link";a.href=`tel:${String(profileData.phone).replace(/[^+\d]/g,"")}`;a.textContent=`☎ ${profileData.phone}`;links.appendChild(a);}add("GitHub",profileData.github,"⌘");add("LinkedIn",profileData.linkedin,"in");}
+      function toggleEditMode(){isEditMode=!isEditMode;const container=document.getElementById("appContainer"),button=document.getElementById("toggleEditBtn");container.classList.toggle("editable-active",isEditMode);document.querySelectorAll(".editable-field").forEach(field=>field.setAttribute("contenteditable",String(isEditMode)));button.textContent=isEditMode?"💾 Save profile":"✏️ Edit profile";button.classList.toggle("button-primary",!isEditMode);button.classList.toggle("button-success",isEditMode);if(isEditMode){showToast("Edit highlighted profile fields, then save.");return;}document.querySelectorAll(".editable-field").forEach(field=>{profileData[field.dataset.key]=field.textContent.trim();});storageSet("portfolioProfile",profileData);updateProfilePresentation();showToast("Profile details saved on this device.");}
+      function durationHours(start,end){if(!/^\d{2}:\d{2}$/.test(start)||!/^\d{2}:\d{2}$/.test(end))return 0;const[sh,sm]=start.split(":").map(Number),[eh,em]=end.split(":").map(Number);return Math.max(0,(eh*60+em-sh*60-sm)/60);}
+      function addScheduleItem(event){event.preventDefault();const day=document.getElementById("dayInput").value,unit=document.getElementById("unitInput").value.trim(),type=document.getElementById("typeInput").value,start=document.getElementById("startInput").value,end=document.getElementById("endInput").value;if(!unit)return;if(durationHours(start,end)<=0){showToast("End time must be after start time.");return;}scheduleData.push({id:globalThis.crypto?.randomUUID?.()||String(Date.now()+Math.random()),day,unit,type,start,end});saveAndRenderSchedule();document.getElementById("unitInput").value="";showToast("Session added to your timetable.");}
+      function saveAndRenderSchedule(){storageSet("portfolioSchedule",scheduleData);renderSchedule();}
+      function renderSchedule(){const tbody=document.getElementById("timetableBody");tbody.replaceChildren();let total=0,classHours=0;const days={};const items=[...scheduleData].filter(item=>item&&item.day&&item.start&&item.end).sort((a,b)=>(dayOrder[a.day]||99)-(dayOrder[b.day]||99)||a.start.localeCompare(b.start));if(!items.length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=6;td.className="empty-state";td.textContent="No sessions yet. Add one using the form above.";tr.appendChild(td);tbody.appendChild(tr);}items.forEach(item=>{const hours=durationHours(item.start,item.end);total+=hours;if(item.type==="Lecture"||item.type==="Lab")classHours+=hours;days[item.day]=(days[item.day]||0)+hours;const tr=document.createElement("tr");[item.day,item.unit,item.type,`${item.start} – ${item.end}`,`${hours.toFixed(1)} hrs`].forEach((value,index)=>{const td=document.createElement("td");if(index===0){const strong=document.createElement("strong");strong.textContent=value;td.appendChild(strong);}else if(index===2){const badge=document.createElement("span");badge.className=`badge ${item.type==="Lab"?"badge-lab":item.type==="Self-Study"?"badge-study":"badge-lecture"}`;badge.textContent=value;td.appendChild(badge);}else td.textContent=value;tr.appendChild(td);});const td=document.createElement("td"),button=document.createElement("button");button.type="button";button.className="button button-danger";button.textContent="Delete";button.dataset.deleteId=String(item.id);button.setAttribute("aria-label",`Delete ${item.unit} on ${item.day}`);td.appendChild(button);tr.appendChild(td);tbody.appendChild(tr);});updateAnalyzer(total,classHours,days);}
+      function updateAnalyzer(total,classHours,days){document.getElementById("totalHoursStat").textContent=`${total.toFixed(1)}h`;document.getElementById("lectureRatioStat").textContent=`${total?Math.round(classHours/total*100):0}%`;let busiest="—",max=0;Object.entries(days).forEach(([day,hours])=>{if(hours>max){busiest=`${day.slice(0,3)} (${hours.toFixed(1)}h)`;max=hours;}});document.getElementById("busiestDayStat").textContent=busiest;const target=40,progress=document.getElementById("workloadProgress");progress.style.width=`${Math.min(total/target*100,100)}%`;progress.style.backgroundColor=total>target?"var(--danger)":total>=25?"var(--success)":"var(--warning)";const label=total>target?"Overloaded":total>=25?"Balanced":"Light Load";document.getElementById("workloadStatusText").textContent=`${total.toFixed(1)} / 40 hrs (${label})`;document.querySelector('[role="progressbar"]').setAttribute("aria-valuenow",String(Math.min(total,target)));}
+      function resetData(){if(!confirm("Reset profile details and timetable to the original defaults?"))return;profileData={...defaultProfile};scheduleData=defaultSchedule.map(item=>({...item}));try{localStorage.removeItem("portfolioProfile");localStorage.removeItem("portfolioSchedule");}catch(_){}if(isEditMode)toggleEditMode();loadProfile();renderSchedule();showToast("Portfolio reset to defaults.");}
+      function init(){const savedProfile=storageGet("portfolioProfile",{});profileData=savedProfile&&typeof savedProfile==="object"&&!Array.isArray(savedProfile)?{...defaultProfile,...savedProfile}:{...defaultProfile};const savedSchedule=storageGet("portfolioSchedule",null);scheduleData=Array.isArray(savedSchedule)?savedSchedule:defaultSchedule.map(item=>({...item}));loadProfile();renderSchedule();document.getElementById("currentYear").textContent=new Date().getFullYear();document.getElementById("toggleEditBtn").addEventListener("click",toggleEditMode);document.getElementById("resetBtn").addEventListener("click",resetData);document.getElementById("scheduleForm").addEventListener("submit",addScheduleItem);document.getElementById("timetableBody").addEventListener("click",event=>{const button=event.target.closest("[data-delete-id]");if(!button)return;scheduleData=scheduleData.filter(item=>String(item.id)!==button.dataset.deleteId);saveAndRenderSchedule();showToast("Session removed.");});}
+      init();
+    })();
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
